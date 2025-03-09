@@ -1,101 +1,102 @@
-import Image from "next/image";
+import Image from "next/image"
+import Link from "next/link"
+
+import { Button } from "@/components/ui/button"
+import ProductSlider from "@/components/product-slider"
+import HeroSlider from "@/components/hero-slider"
+import ContactDialog from "@/components/contact-dialog"
 
 export default function Home() {
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+    <>
+      {/* Hero Section */}
+      <HeroSlider />
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+      {/* Products Section */}
+      <section className="py-16">
+        <div className="container mx-auto">
+          <ProductSlider />
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
-  );
+      </section>
+
+      {/* About Section */}
+      <section className="bg-stone-100 py-16">
+        <div className="container mx-auto px-4 md:px-6">
+          <div className="grid gap-10 md:grid-cols-2">
+            <div className="flex flex-col justify-center space-y-4">
+              <h2 className="text-3xl font-light text-stone-800">Our Commitment to Excellence</h2>
+              <p className="text-stone-600">
+                We source the finest natural stones from around the world, offering an exquisite collection of marble,
+                granite, and other premium stones. Each piece tells a unique story of Earth's geological wonders,
+                bringing timeless beauty to your spaces.
+              </p>
+              <div>
+                <Button className="rounded-none bg-amber-700 text-white hover:bg-amber-800">Discover Our Story</Button>
+              </div>
+            </div>
+            <div className="relative aspect-video overflow-hidden rounded-sm shadow-lg">
+              <Image
+                src="/placeholder.svg?height=400&width=600"
+                alt="Marble Craftsmanship"
+                fill
+                className="object-cover"
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Featured Projects */}
+      <section className="py-16">
+        <div className="container mx-auto px-4 md:px-6">
+          <h2 className="mb-8 text-center text-3xl font-light text-stone-800">Featured Projects</h2>
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {[1, 2, 3].map((project) => (
+              <div key={project} className="group overflow-hidden">
+                <div className="relative aspect-square overflow-hidden">
+                  <Image
+                    src={`/placeholder.svg?height=500&width=500&text=Project ${project}`}
+                    alt={`Featured Project ${project}`}
+                    fill
+                    className="object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+                  <div className="absolute bottom-0 left-0 right-0 p-4 text-white opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                    <h3 className="text-xl font-medium">Luxury Residence</h3>
+                    <p className="text-sm">Premium marble installation</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="mt-10 text-center">
+            <Link href="/projects">
+              <Button className="rounded-none bg-amber-700 text-white hover:bg-amber-800">View All Projects</Button>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Contact CTA */}
+      <section className="bg-stone-800 py-16 text-white">
+        <div className="container mx-auto px-4 md:px-6">
+          <div className="mx-auto max-w-3xl text-center">
+            <h2 className="mb-4 text-3xl font-light">Transform Your Space with Natural Elegance</h2>
+            <p className="mb-8 text-stone-300">
+              Connect with our team to discover the perfect stone for your next project
+            </p>
+            <Link href="/contact">
+              <Button className="rounded-none bg-amber-600 text-white hover:bg-amber-700">Contact Us</Button>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Fixed Email Button */}
+      <div className="fixed bottom-6 right-6 z-40">
+        <ContactDialog />
+      </div>
+    </>
+  )
 }
+
