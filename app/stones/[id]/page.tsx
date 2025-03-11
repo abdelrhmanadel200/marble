@@ -3,6 +3,7 @@ import Link from "next/link"
 import { ArrowLeft } from "lucide-react"
 import ProductInquiryForm from "@/components/product-inquiry-form"
 import { notFound } from "next/navigation"
+import type { Metadata } from "next"
 
 // Sample product data - in a real app, this would come from your data source
 const products = [
@@ -68,12 +69,29 @@ const products = [
   },
 ]
 
-type Props = {
-  params: { id: string }
+export async function generateStaticParams() {
+  return products.map((product) => ({
+    id: product.id,
+  }))
 }
 
-export default function ProductPage({ params }: Props) {
-  const product = products.find((p) => p.id === params.id)
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
+  const resolvedParams = await params
+  const product = products.find((p) => p.id === resolvedParams.id)
+  if (!product) {
+    return {
+      title: "Product Not Found",
+    }
+  }
+  return {
+    title: product.name,
+    description: product.description,
+  }
+}
+
+export default async function ProductPage({ params }: { params: Promise<{ id: string }> }) {
+  const resolvedParams = await params
+  const product = products.find((p) => p.id === resolvedParams.id)
 
   if (!product) {
     notFound()
@@ -131,7 +149,7 @@ export default function ProductPage({ params }: Props) {
           <h2 className="mb-6 text-2xl font-light text-stone-800">You May Also Like</h2>
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
             {products
-              .filter((p) => p.id !== params.id)
+              .filter((p) => p.id !== resolvedParams.id)
               .slice(0, 4)
               .map((relatedProduct) => (
                 <Link key={relatedProduct.id} href={`/stones/${relatedProduct.id}`} className="group cursor-pointer">

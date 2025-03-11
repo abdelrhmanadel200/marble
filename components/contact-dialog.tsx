@@ -16,10 +16,8 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { useToast } from "@/hooks/use-toast"
 
 export default function ContactDialog() {
-  const { toast } = useToast()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [open, setOpen] = useState(false)
   const [formData, setFormData] = useState({
@@ -41,10 +39,7 @@ export default function ContactDialog() {
       // In a real app, this would call an API route
       await new Promise((resolve) => setTimeout(resolve, 1000))
 
-      toast({
-        title: "Message Sent",
-        description: "Thank you for contacting us. We'll get back to you soon.",
-      })
+
 
       // Reset form and close dialog
       setFormData({

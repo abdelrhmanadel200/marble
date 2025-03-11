@@ -8,10 +8,8 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Textarea } from "@/components/ui/textarea"
-import { useToast } from "@/hooks/use-toast"
 
 export default function ContactForm() {
-  const { toast } = useToast()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [formData, setFormData] = useState({
     name: "",
@@ -35,12 +33,6 @@ export default function ContactForm() {
     setIsSubmitting(true)
 
 
-
-
-      toast({
-        title: "Message Sent",
-        description: "Thank you for contacting us. We'll get back to you soon.",
-      })
 
       // Reset form
       setFormData({

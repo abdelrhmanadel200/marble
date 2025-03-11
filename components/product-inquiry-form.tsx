@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { useToast } from "@/hooks/use-toast"
 
 type Product = {
   id: string
@@ -17,7 +16,6 @@ type Product = {
 }
 
 export default function ProductInquiryForm({ product }: { product: Product }) {
-  const { toast } = useToast()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [formData, setFormData] = useState({
     name: "",
@@ -47,11 +45,6 @@ export default function ProductInquiryForm({ product }: { product: Product }) {
         throw new Error("Failed to submit inquiry")
       }
 
-      toast({
-        title: "Inquiry Sent",
-        description: "We've received your inquiry and will contact you soon.",
-      })
-
       // Reset form fields except product message
       setFormData((prev) => ({
         name: "",
@@ -61,12 +54,7 @@ export default function ProductInquiryForm({ product }: { product: Product }) {
       }))
     } catch (error: unknown) {
       console.error("Error submitting inquiry:", error)
-      toast({
-        title: "Error",
-        description:
-          error instanceof Error ? error.message : "There was a problem sending your inquiry. Please try again.",
-        variant: "destructive",
-      })
+  
     } finally {
       setIsSubmitting(false)
     }

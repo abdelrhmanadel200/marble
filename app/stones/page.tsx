@@ -1,13 +1,53 @@
 import Image from "next/image"
-import ProductGrid from "@/components/product-grid"
+import Link from "next/link"
+
+// Sample product data - in a real app, this would come from your data source
+const products = [
+  {
+    id: "1",
+    name: "Black Galaxy",
+    category: "Granite",
+    image: "/marble7.jpg",
+  },
+  {
+    id: "2",
+    name: "Calacatta Gold",
+    category: "Marble",
+    image: "/marble1.jpg",
+  },
+  {
+    id: "3",
+    name: "Silver Travertine",
+    category: "Travertine",
+    image: "/marble2.jpg",
+  },
+  {
+    id: "4",
+    name: "Honey Onyx",
+    category: "Onyx",
+    image: "/marble3.jpg",
+  },
+  {
+    id: "5",
+    name: "Emerald Pearl",
+    category: "Granite",
+    image: "/marble4.jpg",
+  },
+  {
+    id: "6",
+    name: "Statuario",
+    category: "Marble",
+    image: "/marble5.jpg",
+  },
+]
 
 // Sample categories for filter
 const categories = [
-  { name: "All", count: 9 },
-  { name: "Marble", count: 3 },
-  { name: "Granite", count: 3 },
-  { name: "Travertine", count: 2 },
-  { name: "Onyx", count: 1 },
+  { name: "All", count: products.length },
+  { name: "Marble", count: products.filter((p) => p.category === "Marble").length },
+  { name: "Granite", count: products.filter((p) => p.category === "Granite").length },
+  { name: "Travertine", count: products.filter((p) => p.category === "Travertine").length },
+  { name: "Onyx", count: products.filter((p) => p.category === "Onyx").length },
 ]
 
 export default function StonesPage() {
@@ -55,7 +95,28 @@ export default function StonesPage() {
         </div>
 
         {/* Products Grid */}
-        <ProductGrid />
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+          {products.map((product) => (
+            <Link key={product.id} href={`/stones/${product.id}`} className="group cursor-pointer">
+              <div className="overflow-hidden shadow-sm transition-shadow duration-300 hover:shadow-md">
+                <div className="relative aspect-square overflow-hidden">
+                  <Image
+                    src={product.image || "/placeholder.svg"}
+                    alt={product.name}
+                    fill
+                    className="object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                </div>
+                <div className="mt-2 space-y-1 p-4 text-center">
+                  <h3 className="font-medium text-stone-800 transition-colors group-hover:text-amber-700">
+                    {product.name}
+                  </h3>
+                  <p className="text-sm text-stone-600">{product.category}</p>
+                </div>
+              </div>
+            </Link>
+          ))}
+        </div>
       </div>
     </div>
   )
