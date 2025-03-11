@@ -2,11 +2,12 @@ import Image from "next/image"
 import Link from "next/link"
 import { ArrowLeft } from "lucide-react"
 import ProductInquiryForm from "@/components/product-inquiry-form"
+import { notFound } from "next/navigation"
 
 // Sample product data - in a real app, this would come from your data source
 const products = [
   {
-    id: 1,
+    id: "1",
     name: "Black Galaxy",
     category: "Granite",
     description:
@@ -16,7 +17,7 @@ const products = [
     image: "/marble7.jpg",
   },
   {
-    id: 2,
+    id: "2",
     name: "Calacatta Gold",
     category: "Marble",
     description:
@@ -26,7 +27,7 @@ const products = [
     image: "/marble1.jpg",
   },
   {
-    id: 3,
+    id: "3",
     name: "Silver Travertine",
     category: "Travertine",
     description:
@@ -36,7 +37,7 @@ const products = [
     image: "/marble2.jpg",
   },
   {
-    id: 4,
+    id: "4",
     name: "Honey Onyx",
     category: "Onyx",
     description:
@@ -46,7 +47,7 @@ const products = [
     image: "/marble3.jpg",
   },
   {
-    id: 5,
+    id: "5",
     name: "Emerald Pearl",
     category: "Granite",
     description:
@@ -56,7 +57,7 @@ const products = [
     image: "/marble4.jpg",
   },
   {
-    id: 6,
+    id: "6",
     name: "Statuario",
     category: "Marble",
     description:
@@ -67,9 +68,12 @@ const products = [
   },
 ]
 
-export default function ProductPage({ params }: { params: { id: number } }) {
-  const productId = (params.id)
-  const product = products.find((p) => p.id === productId) || products[0]
+export default function ProductPage({ params }: { params: { id: string } }) {
+  const product = products.find((p) => p.id === params.id)
+
+  if (!product) {
+    notFound()
+  }
 
   return (
     <div className="bg-white">
@@ -123,7 +127,7 @@ export default function ProductPage({ params }: { params: { id: number } }) {
           <h2 className="mb-6 text-2xl font-light text-stone-800">You May Also Like</h2>
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
             {products
-              .filter((p) => p.id !== productId)
+              .filter((p) => p.id !== params.id)
               .slice(0, 4)
               .map((relatedProduct) => (
                 <Link key={relatedProduct.id} href={`/stones/${relatedProduct.id}`} className="group cursor-pointer">
@@ -151,3 +155,4 @@ export default function ProductPage({ params }: { params: { id: number } }) {
     </div>
   )
 }
+

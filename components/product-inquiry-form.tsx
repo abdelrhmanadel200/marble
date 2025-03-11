@@ -11,7 +11,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { useToast } from "@/hooks/use-toast"
 
 type Product = {
-  id: number
+  id: string
   name: string
   category: string
 }
@@ -35,7 +35,15 @@ export default function ProductInquiryForm({ product }: { product: Product }) {
     e.preventDefault()
     setIsSubmitting(true)
 
+    try {
+      // In a real app, this would call an API route
+      const response = await fetch("/api/product-inquiry", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...formData, productId: product.id }),
+      })
 
+      if (!response.ok) throw new Error("Failed to submit inquiry")
 
       toast({
         title: "Inquiry Sent",
@@ -49,7 +57,15 @@ export default function ProductInquiryForm({ product }: { product: Product }) {
         phone: "",
         message: prev.message,
       }))
-  
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "There was a problem sending your inquiry. Please try again.",
+        variant: "destructive",
+      })
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
