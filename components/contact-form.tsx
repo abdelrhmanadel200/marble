@@ -34,7 +34,6 @@ export default function ContactForm() {
     e.preventDefault()
     setIsSubmitting(true)
 
-    try {
       // In a real app, this would call an API route
       const response = await fetch("/api/contact", {
         method: "POST",
@@ -42,7 +41,6 @@ export default function ContactForm() {
         body: JSON.stringify(formData),
       })
 
-      if (!response.ok) throw new Error("Failed to submit form")
 
       toast({
         title: "Message Sent",
@@ -57,15 +55,7 @@ export default function ContactForm() {
         subject: "General Inquiry",
         message: "",
       })
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "There was a problem sending your message. Please try again.",
-        variant: "destructive",
-      })
-    } finally {
-      setIsSubmitting(false)
-    }
+    
   }
 
   return (

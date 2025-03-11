@@ -37,7 +37,7 @@ export default function ContactDialog() {
     e.preventDefault()
     setIsSubmitting(true)
 
-    try {
+
       // In a real app, this would call an API route
       await new Promise((resolve) => setTimeout(resolve, 1000))
 
@@ -53,15 +53,7 @@ export default function ContactDialog() {
         message: "",
       })
       setOpen(false)
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "There was a problem sending your message. Please try again.",
-        variant: "destructive",
-      })
-    } finally {
-      setIsSubmitting(false)
-    }
+   
   }
 
   return (

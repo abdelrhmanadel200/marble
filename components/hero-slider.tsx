@@ -1,6 +1,4 @@
-"use client"
-
-import { useState, useEffect, type TouchEvent } from "react"
+import { useState, useEffect, useCallback, type TouchEvent } from "react"
 import Image from "next/image"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -37,6 +35,31 @@ export default function HeroSlider() {
   // Minimum swipe distance (in px)
   const minSwipeDistance = 50
 
+  // Memoized handleNext and handlePrev functions
+  const handlePrev = useCallback(() => {
+    if (isAnimating) return
+
+    setIsAnimating(true)
+    setCurrentSlide((prev) => (prev === 0 ? heroSlides.length - 1 : prev - 1))
+
+    // Reset animation state after transition
+    setTimeout(() => {
+      setIsAnimating(false)
+    }, 500)
+  }, [isAnimating])
+
+  const handleNext = useCallback(() => {
+    if (isAnimating) return
+
+    setIsAnimating(true)
+    setCurrentSlide((prev) => (prev === heroSlides.length - 1 ? 0 : prev + 1))
+
+    // Reset animation state after transition
+    setTimeout(() => {
+      setIsAnimating(false)
+    }, 500)
+  }, [isAnimating])
+
   // Auto-advance slides
   useEffect(() => {
     const interval = setInterval(() => {
@@ -46,7 +69,7 @@ export default function HeroSlider() {
     }, 5000)
 
     return () => clearInterval(interval)
-  }, [currentSlide, isAnimating])
+  }, [currentSlide, isAnimating, handleNext]) // Add handleNext to the dependency array
 
   // Touch event handlers
   const onTouchStart = (e: TouchEvent) => {
@@ -70,30 +93,6 @@ export default function HeroSlider() {
     } else if (isRightSwipe) {
       handlePrev()
     }
-  }
-
-  const handlePrev = () => {
-    if (isAnimating) return
-
-    setIsAnimating(true)
-    setCurrentSlide((prev) => (prev === 0 ? heroSlides.length - 1 : prev - 1))
-
-    // Reset animation state after transition
-    setTimeout(() => {
-      setIsAnimating(false)
-    }, 500)
-  }
-
-  const handleNext = () => {
-    if (isAnimating) return
-
-    setIsAnimating(true)
-    setCurrentSlide((prev) => (prev === heroSlides.length - 1 ? 0 : prev + 1))
-
-    // Reset animation state after transition
-    setTimeout(() => {
-      setIsAnimating(false)
-    }, 500)
   }
 
   return (
@@ -179,4 +178,3 @@ export default function HeroSlider() {
     </section>
   )
 }
-
