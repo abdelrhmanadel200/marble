@@ -67,16 +67,8 @@ const products = [
   },
 ]
 
-
-interface ProductPageProps {
-  params: {
-    id: string;
-  };
-  searchParams?: { [key: string]: string | string[] | undefined };
-}
-
-export default function ProductPage({ params }: ProductPageProps) {
-  const productId = Number.parseInt(params.id)
+export default function ProductPage({ params }: { params: { id: number } }) {
+  const productId = (params.id)
   const product = products.find((p) => p.id === productId) || products[0]
 
   return (
