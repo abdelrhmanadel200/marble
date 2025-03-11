@@ -35,12 +35,6 @@ export default function ProductInquiryForm({ product }: { product: Product }) {
     e.preventDefault()
     setIsSubmitting(true)
 
-      // In a real app, this would call an API route
-      const response = await fetch("/api/product-inquiry", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...formData, productId: product.id }),
-      })
 
 
       toast({
