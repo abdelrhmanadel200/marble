@@ -9,7 +9,7 @@ export default function ContactPage() {
           <div className="text-center">
             <h1 className="text-3xl font-light text-stone-800 md:text-4xl lg:text-5xl">Contact Us</h1>
             <p className="mt-4 text-lg text-stone-600">
-              We'd love to hear from you. Please fill out this form or use our contact information below.
+              We love to hear from you. Please fill out this form or use our contact information below.
             </p>
           </div>
 

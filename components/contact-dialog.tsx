@@ -75,7 +75,7 @@ export default function ContactDialog() {
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Contact Us</DialogTitle>
-          <DialogDescription>Send us a quick message and we'll get back to you as soon as possible.</DialogDescription>
+          <DialogDescription>Send us a quick message and we will get back to you as soon as possible.</DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4 pt-4">
           <div className="space-y-2">

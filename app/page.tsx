@@ -27,7 +27,7 @@ export default function Home() {
               <h2 className="text-3xl font-light text-stone-800">Our Commitment to Excellence</h2>
               <p className="text-stone-600">
                 We source the finest natural stones from around the world, offering an exquisite collection of marble,
-                granite, and other premium stones. Each piece tells a unique story of Earth's geological wonders,
+                granite, and other premium stones. Each piece tells a unique story of Earth geological wonders,
                 bringing timeless beauty to your spaces.
               </p>
               <div>

@@ -95,7 +95,7 @@ export default function ResourcesPage() {
         <div className="mb-10 text-center">
           <p className="mx-auto max-w-3xl text-lg text-stone-600">
             Access our collection of guides, technical documents, and inspiration to help you with your stone projects.
-            Whether you're a homeowner, designer, or contractor, we have resources to support your needs.
+            Whether youre a homeowner, designer, or contractor, we have resources to support your needs.
           </p>
         </div>
 
