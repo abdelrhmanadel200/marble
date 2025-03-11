@@ -68,7 +68,11 @@ const products = [
   },
 ]
 
-export default function ProductPage({ params }: { params: { id: string } }) {
+type Props = {
+  params: { id: string }
+}
+
+export default function ProductPage({ params }: Props) {
   const product = products.find((p) => p.id === params.id)
 
   if (!product) {
