@@ -34,12 +34,7 @@ export default function ContactForm() {
     e.preventDefault()
     setIsSubmitting(true)
 
-      // In a real app, this would call an API route
-      const response = await fetch("/api/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      })
+
 
 
       toast({
