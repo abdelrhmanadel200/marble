@@ -43,7 +43,9 @@ export default function ProductInquiryForm({ product }: { product: Product }) {
         body: JSON.stringify({ ...formData, productId: product.id }),
       })
 
-      if (!response.ok) throw new Error("Failed to submit inquiry")
+      if (!response.ok) {
+        throw new Error("Failed to submit inquiry")
+      }
 
       toast({
         title: "Inquiry Sent",
@@ -57,10 +59,12 @@ export default function ProductInquiryForm({ product }: { product: Product }) {
         phone: "",
         message: prev.message,
       }))
-    } catch (error) {
+    } catch (error: unknown) {
+      console.error("Error submitting inquiry:", error)
       toast({
         title: "Error",
-        description: "There was a problem sending your inquiry. Please try again.",
+        description:
+          error instanceof Error ? error.message : "There was a problem sending your inquiry. Please try again.",
         variant: "destructive",
       })
     } finally {
