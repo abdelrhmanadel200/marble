@@ -140,7 +140,7 @@ export default function HeroSlider() {
           size="icon"
           onClick={handlePrev}
           disabled={isAnimating}
-          className="rounded-none border-amber-100 text-amber-100 hover:bg-amber-100/20"
+          className="rounded-none border-amber-100 text-amber-100 hover:bg-amber-100/20 bg-[#d3d3d3]"
         >
           <ChevronLeft className="h-5 w-5" />
           <span className="sr-only">Previous slide</span>
@@ -150,7 +150,7 @@ export default function HeroSlider() {
           size="icon"
           onClick={handleNext}
           disabled={isAnimating}
-          className="rounded-none border-amber-100 text-amber-100 hover:bg-amber-100/20"
+          className="rounded-none border-amber-100 text-amber-100 hover:bg-amber-100/20 bg-[#d3d3d3]"
         >
           <ChevronRight className="h-5 w-5" />
           <span className="sr-only">Next slide</span>
