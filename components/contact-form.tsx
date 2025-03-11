@@ -3,19 +3,26 @@
 import type React from "react"
 
 import { useState } from "react"
+import { toast } from "sonner"
+import { z } from "zod"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Textarea } from "@/components/ui/textarea"
+
+const formSchema = z.object({
+  name: z.string().min(2, { message: "Name must be at least 2 characters" }),
+  email: z.string().email({ message: "Please enter a valid email address" }),
+  subject: z.string().min(5, { message: "Subject must be at least 5 characters" }),
+  message: z.string().min(10, { message: "Message must be at least 10 characters" }),
+})
 
 export default function ContactForm() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [formData, setFormData] = useState({
     name: "",
     email: "",
-    phone: "",
-    subject: "General Inquiry",
+    subject: "",
     message: "",
   })
 
@@ -24,95 +31,71 @@ export default function ContactForm() {
     setFormData((prev) => ({ ...prev, [name]: value }))
   }
 
-  const handleSubjectChange = (value: string) => {
-    setFormData((prev) => ({ ...prev, subject: value }))
-  }
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsSubmitting(true)
 
+    try {
+      // Validate form data
+      formSchema.parse(formData)
 
+      // Simulate API call
+      await new Promise((resolve) => setTimeout(resolve, 1500))
+
+      toast.success("Message sent successfully! We'll get back to you soon.", {
+        duration: 5000,
+      })
 
       // Reset form
       setFormData({
         name: "",
         email: "",
-        phone: "",
-        subject: "General Inquiry",
+        subject: "",
         message: "",
       })
-    
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        error.errors.forEach((err) => {
+          toast.error(err.message)
+        })
+      } else {
+        toast.error("Failed to send message. Please try again later.")
+      }
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      <div className="grid gap-4 sm:grid-cols-2">
-        <div className="space-y-2">
-          <Label htmlFor="name">Name</Label>
-          <Input
-            id="name"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            required
-            className="rounded-none border-stone-300 focus:border-amber-600 focus:ring-amber-600"
-          />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="email">Email</Label>
-          <Input
-            id="email"
-            name="email"
-            type="email"
-            value={formData.email}
-            onChange={handleChange}
-            required
-            className="rounded-none border-stone-300 focus:border-amber-600 focus:ring-amber-600"
-          />
-        </div>
+      <div className="space-y-2">
+        <Label htmlFor="name">Full Name</Label>
+        <Input id="name" name="name" value={formData.name} onChange={handleChange} placeholder="John Doe" required />
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="phone">Phone (Optional)</Label>
+        <Label htmlFor="email">Email Address</Label>
         <Input
-          id="phone"
-          name="phone"
-          type="tel"
-          value={formData.phone}
+          id="email"
+          name="email"
+          type="email"
+          value={formData.email}
           onChange={handleChange}
-          className="rounded-none border-stone-300 focus:border-amber-600 focus:ring-amber-600"
+          placeholder="john@example.com"
+          required
         />
       </div>
 
       <div className="space-y-2">
-        <Label>Subject</Label>
-        <RadioGroup value={formData.subject} onValueChange={handleSubjectChange} className="flex flex-wrap gap-4">
-          <div className="flex items-center">
-            <RadioGroupItem value="General Inquiry" id="general" />
-            <Label htmlFor="general" className="ml-2 cursor-pointer">
-              General Inquiry
-            </Label>
-          </div>
-          <div className="flex items-center">
-            <RadioGroupItem value="Product Information" id="product" />
-            <Label htmlFor="product" className="ml-2 cursor-pointer">
-              Product Information
-            </Label>
-          </div>
-          <div className="flex items-center">
-            <RadioGroupItem value="Quote Request" id="quote" />
-            <Label htmlFor="quote" className="ml-2 cursor-pointer">
-              Quote Request
-            </Label>
-          </div>
-          <div className="flex items-center">
-            <RadioGroupItem value="Other" id="other" />
-            <Label htmlFor="other" className="ml-2 cursor-pointer">
-              Other
-            </Label>
-          </div>
-        </RadioGroup>
+        <Label htmlFor="subject">Subject</Label>
+        <Input
+          id="subject"
+          name="subject"
+          value={formData.subject}
+          onChange={handleChange}
+          placeholder="How can we help you?"
+          required
+        />
       </div>
 
       <div className="space-y-2">
@@ -122,17 +105,13 @@ export default function ContactForm() {
           name="message"
           value={formData.message}
           onChange={handleChange}
-          rows={6}
+          placeholder="Tell us more about your inquiry..."
+          className="min-h-[150px]"
           required
-          className="rounded-none border-stone-300 focus:border-amber-600 focus:ring-amber-600"
         />
       </div>
 
-      <Button
-        type="submit"
-        disabled={isSubmitting}
-        className="rounded-none bg-amber-700 px-10 text-white hover:bg-amber-800"
-      >
+      <Button type="submit" className="w-full bg-amber-700 hover:bg-amber-800" disabled={isSubmitting}>
         {isSubmitting ? "Sending..." : "Send Message"}
       </Button>
     </form>
