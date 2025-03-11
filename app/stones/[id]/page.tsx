@@ -67,7 +67,13 @@ const products = [
   },
 ]
 
-export default function ProductPage({ params }: { params: { id: string } }) {
+interface ProductPageProps {
+  params: {
+    id: string;
+  };
+}
+
+export default function ProductPage({ params }: ProductPageProps) {
   const productId = Number.parseInt(params.id)
   const product = products.find((p) => p.id === productId) || products[0]
 
