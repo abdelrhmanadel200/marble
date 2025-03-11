@@ -67,10 +67,12 @@ const products = [
   },
 ]
 
+
 interface ProductPageProps {
   params: {
     id: string;
   };
+  searchParams?: { [key: string]: string | string[] | undefined };
 }
 
 export default function ProductPage({ params }: ProductPageProps) {
