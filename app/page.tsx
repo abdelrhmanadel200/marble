@@ -7,7 +7,7 @@ import ContactDialog from "@/components/contact-dialog"
 import ParallaxSection from "@/components/parallax-section"
 import AnimateOnScroll from "@/components/animate-on-scroll"
 import TextureHoverEffect from "@/components/texture-hover-effect"
-import StoneViewer3D from "@/components/stone-viewer-3d"
+// import StoneViewer3D from "@/components/stone-viewer-3d"
 
 export default function Home() {
   return (
@@ -18,13 +18,13 @@ export default function Home() {
       </ParallaxSection>
 
       {/* Products Section */}
-      <AnimateOnScroll animation="fade-up">
+      {/* <AnimateOnScroll animation="fade-up"> */}
         <section className="py-16">
           <div className="container mx-auto">
             <ProductSlider />
           </div>
         </section>
-      </AnimateOnScroll>
+      {/* </AnimateOnScroll> */}
 
       {/* About Section with Parallax */}
       <ParallaxSection speed={0.3} className="bg-stone-100">
@@ -64,7 +64,7 @@ export default function Home() {
       </ParallaxSection>
 
       {/* 3D Stone Viewer Section */}
-      <AnimateOnScroll animation="fade-up">
+      {/* <AnimateOnScroll animation="fade-up">
         <section className="py-16 bg-stone-50">
           <div className="container mx-auto px-4 md:px-6">
             <h2 className="mb-8 text-center text-3xl font-light text-stone-800">Explore Our Stones in 3D</h2>
@@ -73,7 +73,7 @@ export default function Home() {
             </div>
           </div>
         </section>
-      </AnimateOnScroll>
+      </AnimateOnScroll> */}
 
       {/* Featured Projects */}
       <AnimateOnScroll animation="fade-up">
