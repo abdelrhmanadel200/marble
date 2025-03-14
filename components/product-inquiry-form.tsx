@@ -1,7 +1,6 @@
 "use client"
 
 import type React from "react"
-
 import { useState } from "react"
 import { Mail } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -35,7 +34,6 @@ export default function ProductInquiryForm({ product }: { product: Product }) {
     setIsSubmitting(true)
 
     try {
-      // In a real app, this would call an API route
       const response = await fetch("/api/product-inquiry", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -51,9 +49,12 @@ export default function ProductInquiryForm({ product }: { product: Product }) {
         throw new Error("Failed to submit inquiry")
       }
 
-      toast.success("Inquiry Sent", "We have received your inquiry and will contact you soon.")
+      toast.success({
+        title: "Inquiry Sent",
+        description: "We have received your inquiry and will contact you soon.",
+      })
 
-      // Reset form fields except product message
+      // Reset form fields except the product message
       setFormData((prev) => ({
         name: "",
         email: "",
@@ -62,10 +63,14 @@ export default function ProductInquiryForm({ product }: { product: Product }) {
       }))
     } catch (error: unknown) {
       console.error("Error submitting inquiry:", error)
-      toast.error(
-        "Error",
-        error instanceof Error ? error.message : "There was a problem sending your inquiry. Please try again.",
-      )
+
+      toast.error({
+        title: "Error",
+        description:
+          error instanceof Error
+            ? error.message
+            : "There was a problem sending your inquiry. Please try again.",
+      })
     } finally {
       setIsSubmitting(false)
     }
@@ -74,53 +79,40 @@ export default function ProductInquiryForm({ product }: { product: Product }) {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="grid gap-4 sm:grid-cols-2">
-        <div className="space-y-2">
-          <Label htmlFor="name">Name</Label>
-          <Input
-            id="name"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            required
-            className="rounded-none border-stone-300 focus:border-amber-600 focus:ring-amber-600"
-          />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="email">Email</Label>
-          <Input
-            id="email"
-            name="email"
-            type="email"
-            value={formData.email}
-            onChange={handleChange}
-            required
-            className="rounded-none border-stone-300 focus:border-amber-600 focus:ring-amber-600"
-          />
-        </div>
-      </div>
-      <div className="space-y-2">
-        <Label htmlFor="phone">Phone (Optional)</Label>
-        <Input
-          id="phone"
-          name="phone"
-          type="tel"
-          value={formData.phone}
+        <InputField
+          label="Name"
+          id="name"
+          type="text"
+          value={formData.name}
           onChange={handleChange}
-          className="rounded-none border-stone-300 focus:border-amber-600 focus:ring-amber-600"
-        />
-      </div>
-      <div className="space-y-2">
-        <Label htmlFor="message">Message</Label>
-        <Textarea
-          id="message"
-          name="message"
-          value={formData.message}
-          onChange={handleChange}
-          rows={4}
           required
-          className="rounded-none border-stone-300 focus:border-amber-600 focus:ring-amber-600"
+        />
+        <InputField
+          label="Email"
+          id="email"
+          type="email"
+          value={formData.email}
+          onChange={handleChange}
+          required
         />
       </div>
+
+      <InputField
+        label="Phone (Optional)"
+        id="phone"
+        type="tel"
+        value={formData.phone}
+        onChange={handleChange}
+      />
+
+      <TextAreaField
+        label="Message"
+        id="message"
+        value={formData.message}
+        onChange={handleChange}
+        required
+      />
+
       <Button
         type="submit"
         disabled={isSubmitting}
@@ -130,5 +122,67 @@ export default function ProductInquiryForm({ product }: { product: Product }) {
         <Mail className="ml-2 h-4 w-4" />
       </Button>
     </form>
+  )
+}
+
+// Reusable Input Component
+function InputField({
+  label,
+  id,
+  type,
+  value,
+  onChange,
+  required = false,
+}: {
+  label: string
+  id: string
+  type: string
+  value: string
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
+  required?: boolean
+}) {
+  return (
+    <div className="space-y-2">
+      <Label htmlFor={id}>{label}</Label>
+      <Input
+        id={id}
+        name={id}
+        type={type}
+        value={value}
+        onChange={onChange}
+        required={required}
+        className="rounded-none border-stone-300 focus:border-amber-600 focus:ring-amber-600"
+      />
+    </div>
+  )
+}
+
+// Reusable Textarea Component
+function TextAreaField({
+  label,
+  id,
+  value,
+  onChange,
+  required = false,
+}: {
+  label: string
+  id: string
+  value: string
+  onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void
+  required?: boolean
+}) {
+  return (
+    <div className="space-y-2">
+      <Label htmlFor={id}>{label}</Label>
+      <Textarea
+        id={id}
+        name={id}
+        value={value}
+        onChange={onChange}
+        rows={4}
+        required={required}
+        className="rounded-none border-stone-300 focus:border-amber-600 focus:ring-amber-600"
+      />
+    </div>
   )
 }
