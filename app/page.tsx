@@ -7,7 +7,7 @@ import ContactDialog from "@/components/contact-dialog"
 import ParallaxSection from "@/components/parallax-section"
 import AnimateOnScroll from "@/components/animate-on-scroll"
 import TextureHoverEffect from "@/components/texture-hover-effect"
-// import StoneViewer3D from "@/components/stone-viewer-3d"
+import StoneViewer3D from "@/components/stone-viewer-3d"
 
 export default function Home() {
   return (
