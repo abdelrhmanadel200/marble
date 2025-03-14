@@ -1,6 +1,4 @@
-import("nodemailer").then((nodemailer) => {
-  const transporter = nodemailer.createTransport({ ... })
-})
+const nodemailer = require("nodemailer")
 
 // Create a transporter with Gmail configuration
 export const transporter = nodemailer.createTransport({
