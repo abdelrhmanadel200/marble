@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
+import { toast } from "sonner"
 
 type Product = {
   id: string
@@ -38,12 +39,19 @@ export default function ProductInquiryForm({ product }: { product: Product }) {
       const response = await fetch("/api/product-inquiry", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...formData, productId: product.id }),
+        body: JSON.stringify({
+          ...formData,
+          productId: product.id,
+          productName: product.name,
+          productCategory: product.category,
+        }),
       })
 
       if (!response.ok) {
         throw new Error("Failed to submit inquiry")
       }
+
+      toast.success("Inquiry Sent", "We've received your inquiry and will contact you soon.")
 
       // Reset form fields except product message
       setFormData((prev) => ({
@@ -54,7 +62,10 @@ export default function ProductInquiryForm({ product }: { product: Product }) {
       }))
     } catch (error: unknown) {
       console.error("Error submitting inquiry:", error)
-  
+      toast.error(
+        "Error",
+        error instanceof Error ? error.message : "There was a problem sending your inquiry. Please try again.",
+      )
     } finally {
       setIsSubmitting(false)
     }
@@ -121,4 +132,3 @@ export default function ProductInquiryForm({ product }: { product: Product }) {
     </form>
   )
 }
-
