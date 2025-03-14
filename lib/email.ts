@@ -1,4 +1,4 @@
-const nodemailer = require("nodemailer")
+import nodemailer from "nodemailer"
 
 // Create a transporter with Gmail configuration
 export const transporter = nodemailer.createTransport({
