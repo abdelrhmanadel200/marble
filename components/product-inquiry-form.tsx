@@ -49,10 +49,13 @@ export default function ProductInquiryForm({ product }: { product: Product }) {
         throw new Error("Failed to submit inquiry")
       }
 
-      toast.success({
-        title: "Inquiry Sent",
-        description: "We have received your inquiry and will contact you soon.",
-      })
+      toast.success(
+        <>
+          <strong>Inquiry Sent</strong>
+          <br />
+          We have received your inquiry and will contact you soon.
+        </>
+      )
 
       // Reset form fields except the product message
       setFormData((prev) => ({
@@ -64,13 +67,15 @@ export default function ProductInquiryForm({ product }: { product: Product }) {
     } catch (error: unknown) {
       console.error("Error submitting inquiry:", error)
 
-      toast.error({
-        title: "Error",
-        description:
-          error instanceof Error
+      toast.error(
+        <>
+          <strong>Error</strong>
+          <br />
+          {error instanceof Error
             ? error.message
-            : "There was a problem sending your inquiry. Please try again.",
-      })
+            : "There was a problem sending your inquiry. Please try again."}
+        </>
+      )
     } finally {
       setIsSubmitting(false)
     }
