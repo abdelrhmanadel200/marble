@@ -1,5 +1,6 @@
-// @ts-ignore
-import nodemailer from "nodemailer"
+import("nodemailer").then((nodemailer) => {
+  const transporter = nodemailer.createTransport({ ... })
+})
 
 // Create a transporter with Gmail configuration
 export const transporter = nodemailer.createTransport({
