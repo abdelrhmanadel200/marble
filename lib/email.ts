@@ -1,3 +1,4 @@
+// @ts-ignore
 import nodemailer from "nodemailer"
 
 // Create a transporter with Gmail configuration
