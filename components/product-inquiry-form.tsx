@@ -51,7 +51,7 @@ export default function ProductInquiryForm({ product }: { product: Product }) {
         throw new Error("Failed to submit inquiry")
       }
 
-      toast.success("Inquiry Sent", "We've received your inquiry and will contact you soon.")
+      toast.success("Inquiry Sent", "We have received your inquiry and will contact you soon.")
 
       // Reset form fields except product message
       setFormData((prev) => ({
