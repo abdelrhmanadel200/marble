@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server"
+import { sendProductInquiryEmail } from "@/lib/email"
 
 export async function POST(request: Request) {
   try {
@@ -9,24 +10,16 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 })
     }
 
-    // In a real application, you would send an email here with the product inquiry
-    // For example, using nodemailer, SendGrid, or other email service
-
-    // Example: Send email through a service
-    // await sendEmail({
-    //   to: "sales@example.com",
-    //   subject: `Product Inquiry: Product #${data.productId}`,
-    //   text: `
-    //     Name: ${data.name}
-    //     Email: ${data.email}
-    //     Phone: ${data.phone || "Not provided"}
-    //     Product ID: ${data.productId}
-    //     Message: ${data.message}
-    //   `,
-    // });
-
-    // For now, we'll just log the data and return a success response
-    console.log("Product inquiry submission:", data)
+    // Send email
+    await sendProductInquiryEmail({
+      name: data.name,
+      email: data.email,
+      phone: data.phone,
+      message: data.message,
+      productId: data.productId,
+      productName: data.productName || "Unknown Product",
+      productCategory: data.productCategory || "Unknown Category",
+    })
 
     return NextResponse.json({ success: true, message: "Inquiry received" }, { status: 200 })
   } catch (error) {
