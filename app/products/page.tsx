@@ -6,11 +6,11 @@ import Link from "next/link"
 import Image from "next/image"
 import { Heart, Star, Filter } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { Checkbox } from "@/components/ui/checkbox"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { products } from "@/lib/products"
 import { useWishlist } from "@/contexts/wishlist-context"
 import { useCart } from "@/contexts/cart-context"
-import { Checkbox } from "@/components/ui/checkbox"
 
 const categories = [
   { id: "living-room", name: "Living Room" },
