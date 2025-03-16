@@ -1,193 +1,125 @@
 "use client"
 
-import type React from "react"
 import { useState } from "react"
-import { Mail } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { toast } from "sonner"
+import { CheckCircle, AlertCircle, Loader2 } from "lucide-react"
+import { sendProductInquiry } from "@/actions/send-email"
 
-type Product = {
-  id: string
-  name: string
-  category: string
+interface ProductInquiryFormProps {
+  productName: string
+  productId: string
 }
 
-export default function ProductInquiryForm({ product }: { product: Product }) {
+export function ProductInquiryForm({ productName, productId }: ProductInquiryFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    message: `I'm interested in ${product.name} (${product.category}) and would like to get more information.`,
-  })
+  const [formStatus, setFormStatus] = useState<{
+    success?: boolean
+    message?: string
+  }>({})
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target
-    setFormData((prev) => ({ ...prev, [name]: value }))
-  }
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+  async function handleSubmit(formData: FormData) {
     setIsSubmitting(true)
+    setFormStatus({})
 
     try {
-      const response = await fetch("/api/product-inquiry", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...formData,
-          productId: product.id,
-          productName: product.name,
-          productCategory: product.category,
-        }),
-      })
+      const result = await sendProductInquiry(formData)
 
-      if (!response.ok) {
-        throw new Error("Failed to submit inquiry")
+      if (result.success) {
+        setFormStatus({
+          success: true,
+          message: "Your inquiry has been sent successfully! We will get back to you soon.",
+        })
+        // Reset form
+        const form = document.getElementById("product-inquiry-form") as HTMLFormElement
+        form.reset()
+      } else {
+        setFormStatus({
+          success: false,
+          message: result.error || "Failed to send inquiry. Please try again.",
+        })
       }
-
-      toast.success(
-        <>
-          <strong>Inquiry Sent</strong>
-          <br />
-          We have received your inquiry and will contact you soon.
-        </>
-      )
-
-      // Reset form fields except the product message
-      setFormData((prev) => ({
-        name: "",
-        email: "",
-        phone: "",
-        message: prev.message,
-      }))
-    } catch (error: unknown) {
-      console.error("Error submitting inquiry:", error)
-
-      toast.error(
-        <>
-          <strong>Error</strong>
-          <br />
-          {error instanceof Error
-            ? error.message
-            : "There was a problem sending your inquiry. Please try again."}
-        </>
-      )
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (error) {
+      setFormStatus({
+        success: false,
+        message: "An unexpected error occurred. Please try again.",
+      })
     } finally {
       setIsSubmitting(false)
     }
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <div className="grid gap-4 sm:grid-cols-2">
-        <InputField
-          label="Name"
-          id="name"
-          type="text"
-          value={formData.name}
-          onChange={handleChange}
-          required
-        />
-        <InputField
-          label="Email"
-          id="email"
-          type="email"
-          value={formData.email}
-          onChange={handleChange}
-          required
-        />
-      </div>
+    <div className="border rounded-lg p-6">
+      <h3 className="text-xl font-bold mb-4">Product Inquiry</h3>
 
-      <InputField
-        label="Phone (Optional)"
-        id="phone"
-        type="tel"
-        value={formData.phone}
-        onChange={handleChange}
-      />
+      {formStatus.success ? (
+        <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-4">
+          <div className="flex items-center">
+            <CheckCircle className="h-5 w-5 text-green-500 mr-2" />
+            <p className="text-green-700">{formStatus.message}</p>
+          </div>
+        </div>
+      ) : formStatus.message ? (
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
+          <div className="flex items-center">
+            <AlertCircle className="h-5 w-5 text-red-500 mr-2" />
+            <p className="text-red-700">{formStatus.message}</p>
+          </div>
+        </div>
+      ) : null}
 
-      <TextAreaField
-        label="Message"
-        id="message"
-        value={formData.message}
-        onChange={handleChange}
-        required
-      />
+      <form id="product-inquiry-form" action={handleSubmit} className="space-y-4">
+        <input type="hidden" name="productName" value={productName} />
+        <input type="hidden" name="productId" value={productId} />
 
-      <Button
-        type="submit"
-        disabled={isSubmitting}
-        className="w-full rounded-none bg-amber-700 text-white hover:bg-amber-800"
-      >
-        {isSubmitting ? "Sending..." : "Send Inquiry"}
-        <Mail className="ml-2 h-4 w-4" />
-      </Button>
-    </form>
-  )
-}
+        <div>
+          <label htmlFor="name" className="block text-sm font-medium mb-1">
+            Your Name <span className="text-red-600">*</span>
+          </label>
+          <Input id="name" name="name" required />
+        </div>
 
-// Reusable Input Component
-function InputField({
-  label,
-  id,
-  type,
-  value,
-  onChange,
-  required = false,
-}: {
-  label: string
-  id: string
-  type: string
-  value: string
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
-  required?: boolean
-}) {
-  return (
-    <div className="space-y-2">
-      <Label htmlFor={id}>{label}</Label>
-      <Input
-        id={id}
-        name={id}
-        type={type}
-        value={value}
-        onChange={onChange}
-        required={required}
-        className="rounded-none border-stone-300 focus:border-amber-600 focus:ring-amber-600"
-      />
-    </div>
-  )
-}
+        <div>
+          <label htmlFor="email" className="block text-sm font-medium mb-1">
+            Email <span className="text-red-600">*</span>
+          </label>
+          <Input id="email" name="email" type="email" required />
+        </div>
 
-// Reusable Textarea Component
-function TextAreaField({
-  label,
-  id,
-  value,
-  onChange,
-  required = false,
-}: {
-  label: string
-  id: string
-  value: string
-  onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void
-  required?: boolean
-}) {
-  return (
-    <div className="space-y-2">
-      <Label htmlFor={id}>{label}</Label>
-      <Textarea
-        id={id}
-        name={id}
-        value={value}
-        onChange={onChange}
-        rows={4}
-        required={required}
-        className="rounded-none border-stone-300 focus:border-amber-600 focus:ring-amber-600"
-      />
+        <div>
+          <label htmlFor="phone" className="block text-sm font-medium mb-1">
+            Phone
+          </label>
+          <Input id="phone" name="phone" />
+        </div>
+
+        <div>
+          <label htmlFor="message" className="block text-sm font-medium mb-1">
+            Message <span className="text-red-600">*</span>
+          </label>
+          <Textarea
+            id="message"
+            name="message"
+            rows={4}
+            placeholder={`I'm interested in ${productName}. Please provide more information.`}
+            required
+          />
+        </div>
+
+        <Button type="submit" className="w-full bg-red-600 hover:bg-red-700" disabled={isSubmitting}>
+          {isSubmitting ? (
+            <>
+              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              Sending...
+            </>
+          ) : (
+            "Send Inquiry"
+          )}
+        </Button>
+      </form>
     </div>
   )
 }

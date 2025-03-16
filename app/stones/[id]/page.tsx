@@ -1,7 +1,7 @@
 import Image from "next/image"
 import Link from "next/link"
 import { ArrowLeft } from "lucide-react"
-import ProductInquiryForm from "@/components/product-inquiry-form"
+import {ProductInquiryForm} from "@/components/product-inquiry-form"
 import { notFound } from "next/navigation"
 import type { Metadata } from "next"
 
@@ -139,7 +139,7 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
 
             <div className="pt-4">
               <h2 className="mb-4 text-xl font-medium text-stone-800">Inquire About This Stone</h2>
-              <ProductInquiryForm product={product} />
+              <ProductInquiryForm productId={product.id} productName={product.name} />
             </div>
           </div>
         </div>
