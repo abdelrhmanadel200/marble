@@ -315,6 +315,6 @@ export default function Header() {
           onClick={() => setIsMenuOpen(false)}
         ></div>
       )}
-    </header>
+    </header> 
   );
 }
