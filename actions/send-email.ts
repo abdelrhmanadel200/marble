@@ -1,6 +1,7 @@
 "use server"
 
 import nodemailer from "nodemailer"
+import { createProductInquiryEmail, createContactFormEmail } from "@/lib/email-templates"
 
 type EmailData = {
   to: string
@@ -45,21 +46,31 @@ export async function sendProductInquiry(formData: FormData) {
     return { success: false, error: "Missing required fields" }
   }
 
-  const htmlContent = `
-    <h2>New Product Inquiry</h2>
-    <p><strong>Product:</strong> ${productName} (ID: ${productId})</p>
-    <p><strong>From:</strong> ${name}</p>
-    <p><strong>Email:</strong> ${email}</p>
-    <p><strong>Phone:</strong> ${phone || "Not provided"}</p>
-    <h3>Message:</h3>
-    <p>${message.replace(/\n/g, "<br>")}</p>
-  `
+  // Email validation
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  if (!emailRegex.test(email)) {
+    return { success: false, error: "Please enter a valid email address" }
+  }
 
-  return await sendEmail({
-    to: process.env.EMAIL_RECIPIENT || "",
-    subject: `Product Inquiry: ${productName}`,
-    html: htmlContent,
-  })
+  try {
+    const htmlContent = createProductInquiryEmail({
+      productName,
+      productId,
+      name,
+      email,
+      phone,
+      message,
+    })
+
+    return await sendEmail({
+      to: process.env.EMAIL_RECIPIENT || "",
+      subject: `Product Inquiry: ${productName}`,
+      html: htmlContent,
+    })
+  } catch (error: any) {
+    console.error("Error sending product inquiry:", error)
+    return { success: false, error: error.message || "Failed to send inquiry" }
+  }
 }
 
 export async function sendContactForm(formData: FormData) {
@@ -73,15 +84,13 @@ export async function sendContactForm(formData: FormData) {
     return { success: false, error: "Missing required fields" }
   }
 
-  const htmlContent = `
-    <h2>New Contact Form Submission</h2>
-    <p><strong>From:</strong> ${name}</p>
-    <p><strong>Email:</strong> ${email}</p>
-    <p><strong>Phone:</strong> ${phone || "Not provided"}</p>
-    <p><strong>Subject:</strong> ${subject}</p>
-    <h3>Message:</h3>
-    <p>${message.replace(/\n/g, "<br>")}</p>
-  `
+  const htmlContent = createContactFormEmail({
+    name,
+    email,
+    phone,
+    subject,
+    message,
+  })
 
   return await sendEmail({
     to: process.env.EMAIL_RECIPIENT || "",

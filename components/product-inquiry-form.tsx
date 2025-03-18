@@ -4,8 +4,8 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
-import { CheckCircle, AlertCircle, Loader2 } from "lucide-react"
 import { sendProductInquiry } from "@/actions/send-email"
+import { CheckCircle, AlertCircle, Loader2 } from "lucide-react"
 
 interface ProductInquiryFormProps {
   productName: string
@@ -20,6 +20,29 @@ export function ProductInquiryForm({ productName, productId }: ProductInquiryFor
   }>({})
 
   async function handleSubmit(formData: FormData) {
+    // Basic validation
+    const name = formData.get("name") as string
+    const email = formData.get("email") as string
+    const message = formData.get("message") as string
+
+    if (!name || !email || !message) {
+      setFormStatus({
+        success: false,
+        message: "Please fill in all required fields.",
+      })
+      return
+    }
+
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(email)) {
+      setFormStatus({
+        success: false,
+        message: "Please enter a valid email address.",
+      })
+      return
+    }
+
     setIsSubmitting(true)
     setFormStatus({})
 
@@ -40,7 +63,6 @@ export function ProductInquiryForm({ productName, productId }: ProductInquiryFor
           message: result.error || "Failed to send inquiry. Please try again.",
         })
       }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       setFormStatus({
         success: false,

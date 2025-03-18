@@ -1,297 +1,154 @@
 "use client"
 
-import { useState } from "react"
-import { useSearchParams } from "next/navigation"
-import Link from "next/link"
+import { useState, useEffect } from "react"
 import Image from "next/image"
-import { Heart, Star, Filter } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { products } from "@/lib/products"
-import { useWishlist } from "@/contexts/wishlist-context"
-import { useCart } from "@/contexts/cart-context"
-
-const categories = [
-  { id: "living-room", name: "Living Room" },
-  { id: "bedroom", name: "Bedroom" },
-  { id: "dining", name: "Dining" },
-  { id: "office", name: "Office" },
-]
-
-const priceRanges = [
-  { id: "0-500", name: "Under $500" },
-  { id: "500-1000", name: "$500 - $1000" },
-  { id: "1000-2000", name: "$1000 - $2000" },
-  { id: "2000+", name: "Over $2000" },
-]
+import Link from "next/link"
+import { useSearchParams } from "next/navigation"
+import { getProducts, getCategories, getProductsByCategory } from "@/lib/productService"
+import type { Product, ProductCategory } from "@/types/product"
+import { ProductGridSkeleton } from "@/components/skeletons/product-skeleton"
+import { CategorySkeleton } from "@/components/skeletons/category-skeleton"
+import { useScrollTop } from "@/hooks/use-scroll-top"
 
 export default function ProductsPage() {
   const searchParams = useSearchParams()
   const categoryParam = searchParams.get("category")
 
-  const [selectedCategories, setSelectedCategories] = useState<string[]>(categoryParam ? [categoryParam] : [])
-  const [selectedPriceRanges, setSelectedPriceRanges] = useState<string[]>([])
-  const [sortOption, setSortOption] = useState("featured")
-  const wishlist = useWishlist()
-  const cart = useCart()
+  // Use the scroll top hook
+  useScrollTop()
 
-  const toggleCategory = (categoryId: string) => {
-    setSelectedCategories((prev) =>
-      prev.includes(categoryId) ? prev.filter((id) => id !== categoryId) : [...prev, categoryId],
-    )
-  }
+  const [products, setProducts] = useState<Product[]>([])
+  const [categories, setCategories] = useState<ProductCategory[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [currentCategory, setCurrentCategory] = useState<ProductCategory | null>(null)
 
-  const togglePriceRange = (rangeId: string) => {
-    setSelectedPriceRanges((prev) =>
-      prev.includes(rangeId) ? prev.filter((id) => id !== rangeId) : [...prev, rangeId],
-    )
-  }
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true)
+      setError(null)
 
-  const isInPriceRange = (price: number, range: string) => {
-    switch (range) {
-      case "0-500":
-        return price < 500
-      case "500-1000":
-        return price >= 500 && price < 1000
-      case "1000-2000":
-        return price >= 1000 && price < 2000
-      case "2000+":
-        return price >= 2000
-      default:
-        return false
+      try {
+        // Fetch categories
+        const categoriesData = await getCategories()
+        setCategories(categoriesData)
+
+        // Find current category if categoryParam exists
+        if (categoryParam) {
+          const category = categoriesData.find((c) => c.id === categoryParam)
+          setCurrentCategory(category || null)
+        } else {
+          setCurrentCategory(null)
+        }
+
+        // Fetch products based on category filter
+        let productsData: Product[] = []
+        if (categoryParam) {
+          console.log(`Fetching products for category: ${categoryParam}`)
+          productsData = await getProductsByCategory(categoryParam)
+          console.log(`Fetched ${productsData.length} products for category ${categoryParam}`)
+        } else {
+          productsData = await getProducts()
+          console.log(`Fetched ${productsData.length} total products`)
+        }
+
+        setProducts(productsData)
+      } catch (err: any) {
+        console.error("Error fetching data:", err)
+        setError(err.message || "Failed to load products. Please try again later.")
+      } finally {
+        setLoading(false)
+      }
     }
-  }
 
-  const filteredProducts = products.filter((product) => {
-    // Filter by category
-    if (selectedCategories.length > 0 && !selectedCategories.includes(product.category)) {
-      return false
-    }
-
-    // Filter by price range
-    if (selectedPriceRanges.length > 0) {
-      const price = product.salePrice || product.price
-      return selectedPriceRanges.some((range) => isInPriceRange(price, range))
-    }
-
-    return true
-  })
-
-  const sortedProducts = [...filteredProducts].sort((a, b) => {
-    const priceA = a.salePrice || a.price
-    const priceB = b.salePrice || b.price
-
-    switch (sortOption) {
-      case "price-low-high":
-        return priceA - priceB
-      case "price-high-low":
-        return priceB - priceA
-      case "newest":
-        return 0 // In a real app, you'd sort by date
-      case "rating":
-        return b.rating - a.rating
-      default:
-        return 0 // Featured - could be a custom order in a real app
-    }
-  })
+    fetchData()
+  }, [categoryParam])
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8 md:py-12">
-      <h1 className="text-3xl font-bold mb-8">Products</h1>
+    <div className="max-w-7xl mx-auto px-4 py-8">
+      <h1 className="text-3xl font-bold mb-2">
+        {loading ? "Loading..." : currentCategory ? currentCategory.name : "All Products"}
+      </h1>
 
-      <div className="flex flex-col md:flex-row gap-8">
-        {/* Filters - Desktop */}
-        <div className="w-full md:w-64 hidden md:block">
-          <div className="border rounded-lg p-4">
-            <div className="mb-6">
-              <h3 className="font-medium mb-3">Categories</h3>
-              <div className="space-y-2">
-                {categories.map((category) => (
-                  <div key={category.id} className="flex items-center">
-                    <Checkbox
-                      id={`category-${category.id}`}
-                      checked={selectedCategories.includes(category.id)}
-                      onCheckedChange={() => toggleCategory(category.id)}
-                    />
-                    <label htmlFor={`category-${category.id}`} className="ml-2 text-sm cursor-pointer">
-                      {category.name}
-                    </label>
-                  </div>
-                ))}
-              </div>
-            </div>
+      {/* Category description if available and not loading */}
+      {!loading && currentCategory && currentCategory.description && (
+        <p className="text-gray-600 mb-8">{currentCategory.description}</p>
+      )}
 
-            <div>
-              <h3 className="font-medium mb-3">Price Range</h3>
-              <div className="space-y-2">
-                {priceRanges.map((range) => (
-                  <div key={range.id} className="flex items-center">
-                    <Checkbox
-                      id={`price-${range.id}`}
-                      checked={selectedPriceRanges.includes(range.id)}
-                      onCheckedChange={() => togglePriceRange(range.id)}
-                    />
-                    <label htmlFor={`price-${range.id}`} className="ml-2 text-sm cursor-pointer">
-                      {range.name}
-                    </label>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
+      {/* Category filters - show skeleton when loading */}
+      {loading ? (
+        <CategorySkeleton />
+      ) : (
+        <div className="flex flex-wrap gap-2 mb-8">
+          <Link
+            href="/products"
+            className={`px-4 py-2 rounded-md ${!categoryParam ? "bg-blue-600 text-white" : "bg-gray-200 hover:bg-gray-300"}`}
+          >
+            All
+          </Link>
+          {categories.map((category) => (
+            <Link
+              key={category.id}
+              href={`/products?category=${category.id}`}
+              className={`px-4 py-2 rounded-md ${categoryParam === category.id ? "bg-blue-600 text-white" : "bg-gray-200 hover:bg-gray-300"}`}
+            >
+              {category.name}
+            </Link>
+          ))}
         </div>
+      )}
 
-        {/* Filters - Mobile */}
-        <Sheet>
-          <SheetTrigger asChild className="md:hidden mb-4">
-            <Button variant="outline" className="flex items-center">
-              <Filter className="h-4 w-4 mr-2" />
-              Filters
-            </Button>
-          </SheetTrigger>
-          <SheetContent side="left" className="w-[300px] sm:w-[400px]">
-            <div className="py-4">
-              <h3 className="font-medium mb-3">Categories</h3>
-              <div className="space-y-2">
-                {categories.map((category) => (
-                  <div key={category.id} className="flex items-center">
-                    <Checkbox
-                      id={`mobile-category-${category.id}`}
-                      checked={selectedCategories.includes(category.id)}
-                      onCheckedChange={() => toggleCategory(category.id)}
-                    />
-                    <label htmlFor={`mobile-category-${category.id}`} className="ml-2 text-sm cursor-pointer">
-                      {category.name}
-                    </label>
-                  </div>
-                ))}
-              </div>
-            </div>
+      {/* Products grid - show skeleton when loading */}
+      {loading ? (
+        <ProductGridSkeleton />
+      ) : error ? (
+        <div className="text-center py-12">
+          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-4">{error}</div>
+          <Link href="/" className="inline-block mt-4 bg-blue-600 text-white px-4 py-2 rounded-md">
+            Return to Home
+          </Link>
+        </div>
+      ) : products.length > 0 ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          {products.map((product, index) => {
+            const productCategory = categories.find((c) => c.id === product.category)
 
-            <div className="py-4">
-              <h3 className="font-medium mb-3">Price Range</h3>
-              <div className="space-y-2">
-                {priceRanges.map((range) => (
-                  <div key={range.id} className="flex items-center">
-                    <Checkbox
-                      id={`mobile-price-${range.id}`}
-                      checked={selectedPriceRanges.includes(range.id)}
-                      onCheckedChange={() => togglePriceRange(range.id)}
-                    />
-                    <label htmlFor={`mobile-price-${range.id}`} className="ml-2 text-sm cursor-pointer">
-                      {range.name}
-                    </label>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </SheetContent>
-        </Sheet>
-
-        {/* Products */}
-        <div className="flex-1">
-          <div className="flex justify-between items-center mb-6">
-            <p className="text-sm text-gray-600">{sortedProducts.length} products</p>
-
-            <div className="flex items-center">
-              <label htmlFor="sort" className="text-sm mr-2">
-                Sort by:
-              </label>
-              <select
-                id="sort"
-                value={sortOption}
-                onChange={(e) => setSortOption(e.target.value)}
-                className="text-sm border rounded-md p-2"
-              >
-                <option value="featured">Featured</option>
-                <option value="price-low-high">Price: Low to High</option>
-                <option value="price-high-low">Price: High to Low</option>
-                <option value="newest">Newest</option>
-                <option value="rating">Rating</option>
-              </select>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {sortedProducts.map((product) => (
+            return (
               <div key={product.id} className="border rounded-lg overflow-hidden group">
-                <div className="relative">
-                  <Link href={`/products/${product.id}`}>
-                    <div className="relative aspect-square overflow-hidden">
-                      <Image
-                        src={product.images[0] || "/placeholder.svg"}
-                        alt={product.name}
-                        fill
-                        className="object-cover transition-transform duration-300 group-hover:scale-105"
-                      />
-                    </div>
-                  </Link>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="absolute top-2 right-2 bg-white rounded-full h-8 w-8 shadow-sm hover:text-red-600"
-                    onClick={() => wishlist.toggleItem(product)}
-                  >
-                    <Heart
-                      className={`h-4 w-4 ${wishlist.isInWishlist(product.id) ? "fill-red-600 text-red-600" : ""}`}
+                <Link href={`/products/${product.id}`}>
+                  <div className="relative h-64">
+                    <Image
+                      src={product.images[0] || "/placeholder.svg?height=300&width=400&text=Stone+Product"}
+                      alt={product.name}
+                      fill
+                      className="object-cover transition-transform duration-300 group-hover:scale-105"
+                      priority={index === 0}
+                      loading={index === 0 ? "eager" : "lazy"}
                     />
-                  </Button>
-                </div>
-
-                <div className="p-4">
-                  <Link href={`/products/${product.id}`} className="block">
-                    <h3 className="font-medium hover:text-red-600">{product.name}</h3>
-                    <div className="flex items-center mt-1">
-                      <div className="flex">
-                        {[...Array(5)].map((_, i) => (
-                          <Star
-                            key={i}
-                            className={`h-4 w-4 ${
-                              i < Math.floor(product.rating) ? "text-yellow-400 fill-yellow-400" : "text-gray-300"
-                            }`}
-                          />
-                        ))}
-                      </div>
-                      <span className="ml-1 text-xs text-gray-600">({product.reviews})</span>
+                  </div>
+                  <div className="p-4">
+                    <h2 className="font-semibold text-lg">{product.name}</h2>
+                    <p className="text-gray-600 mt-2 line-clamp-2">{product.description}</p>
+                    <div className="mt-4 flex justify-between items-center">
+                      <span className="text-sm text-gray-500">
+                        {productCategory ? productCategory.name : "Uncategorized"}
+                      </span>
+                      <span className="text-blue-600 text-sm font-medium">View Details</span>
                     </div>
-                    <div className="mt-2">
-                      {product.salePrice ? (
-                        <>
-                          <span className="text-red-600 font-bold">${product.salePrice.toFixed(2)}</span>
-                          <span className="ml-2 text-sm text-gray-500 line-through">${product.price.toFixed(2)}</span>
-                        </>
-                      ) : (
-                        <span className="font-bold">${product.price.toFixed(2)}</span>
-                      )}
-                    </div>
-                  </Link>
-
-                  <Button className="w-full mt-4 bg-red-600 hover:bg-red-700" onClick={() => cart.addItem(product, 1)}>
-                    Add to Cart
-                  </Button>
-                </div>
+                  </div>
+                </Link>
               </div>
-            ))}
-          </div>
-
-          {sortedProducts.length === 0 && (
-            <div className="text-center py-12">
-              <p className="text-gray-600">No products match your filters.</p>
-              <Button
-                variant="outline"
-                className="mt-4"
-                onClick={() => {
-                  setSelectedCategories([])
-                  setSelectedPriceRanges([])
-                }}
-              >
-                Clear Filters
-              </Button>
-            </div>
-          )}
+            )
+          })}
         </div>
-      </div>
+      ) : (
+        <div className="text-center py-12">
+          <p className="text-gray-600">No products found in this category.</p>
+          <Link href="/products" className="inline-block mt-4 bg-blue-600 text-white px-4 py-2 rounded-md">
+            View All Products
+          </Link>
+        </div>
+      )}
     </div>
   )
 }

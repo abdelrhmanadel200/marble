@@ -1,38 +1,51 @@
 import type React from "react"
+import "./globals.css"
 import type { Metadata } from "next"
 import { Inter } from "next/font/google"
-import "./globals.css"
 import Header from "@/components/header"
 import Footer from "@/components/footer"
-import { ThemeProvider } from "@/components/theme-provider"
-import { CartProvider } from "@/contexts/cart-context"
-import { WishlistProvider } from "@/contexts/wishlist-context"
+import ScrollToTop from "@/components/scroll-to-top"
 
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "Top Modern - Premium Products",
-  description: "Top Modern offers high-quality products for your needs",
+  title: "Top Marble - Premium Stone Products",
+  description:
+    "Top Marble offers high-quality marble, granite, and limestone products for residential and commercial projects.",
+  keywords: "marble, granite, limestone, stone products, premium stone, Egypt",
+  openGraph: {
+    title: "Top Marble - Premium Stone Products",
+    description: "High-quality marble, granite, and limestone products for your home and commercial projects.",
+    url: "https://topmarble.net",
+    siteName: "Top Marble",
+    images: [
+      {
+        url: "/og-image.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Top Marble Products",
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
     generator: 'v0.dev'
 }
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode
-}>) {
+}) {
   return (
     <html lang="en">
       <body className={inter.className}>
-        <ThemeProvider attribute="class" defaultTheme="light">
-          <CartProvider>
-            <WishlistProvider>
-              <Header />
-              <main>{children}</main>
-              <Footer />
-            </WishlistProvider>
-          </CartProvider>
-        </ThemeProvider>
+        <div className="flex flex-col min-h-screen">
+          <Header />
+          <main className="flex-grow">{children}</main>
+          <Footer />
+          <ScrollToTop />
+        </div>
       </body>
     </html>
   )

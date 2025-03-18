@@ -24,7 +24,6 @@ export default function ContactUsPage() {
         setIsSubmitting(false)
         alert("Failed to send message: " + (result.error || "Unknown error"))
       }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       setIsSubmitting(false)
       alert("An error occurred while sending your message. Please try again.")
@@ -45,7 +44,7 @@ export default function ContactUsPage() {
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="text-center text-white max-w-3xl px-4">
             <h1 className="text-4xl md:text-6xl font-bold mb-6">Contact Us</h1>
-            <p className="text-lg md:text-xl">We&apos;d love to hear from you. Get in touch with our team.</p>
+            <p className="text-lg md:text-xl">We'd love to hear from you. Get in touch with our team.</p>
           </div>
         </div>
       </section>
@@ -104,7 +103,7 @@ export default function ContactUsPage() {
                 <CheckCircle className="h-12 w-12 text-green-500 mx-auto mb-4" />
                 <h3 className="text-xl font-bold mb-2">Message Sent!</h3>
                 <p className="text-gray-600 mb-4">
-                  Thank you for contacting us. We&apos;ll get back to you as soon as possible.
+                  Thank you for contacting us. We'll get back to you as soon as possible.
                 </p>
                 <Button onClick={() => setIsSubmitted(false)} className="bg-red-600 hover:bg-red-700">
                   Send Another Message
