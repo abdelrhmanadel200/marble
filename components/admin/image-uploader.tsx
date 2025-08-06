@@ -5,6 +5,7 @@ import type React from "react"
 import { useState, useRef } from "react"
 import Image from "next/image"
 import { Upload, X, Loader2 } from "lucide-react"
+import { uploadImage } from "@/lib/serverStorage"
 
 interface ImageUploaderProps {
   onImageUploaded: (url: string) => void
@@ -46,22 +47,8 @@ export default function ImageUploader({ onImageUploaded, folder, className = "" 
     setError(null)
 
     try {
-      const formData = new FormData()
-      formData.append("file", file)
-      formData.append("folder", folder)
-
-      const response = await fetch("/api/upload", {
-        method: "POST",
-        body: formData,
-      })
-
-      if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.error || "Failed to upload image")
-      }
-
-      const data = await response.json()
-      onImageUploaded(data.url)
+      const imageUrl = await uploadImage(file, folder)
+      onImageUploaded(imageUrl)
     } catch (err: any) {
       console.error("Upload error:", err)
       setError(err.message || "Failed to upload image")

@@ -14,7 +14,7 @@ import {
     limit,
   } from "firebase/firestore"
   import { db } from "./firebase"
-  import { uploadImage, deleteImage } from "./cloudinary"
+  import { uploadImage, deleteImage } from "./serverStorage"
   import type { Project } from "@/types/project"
   
   // Collection reference
@@ -157,7 +157,7 @@ import {
   // Upload a project image
   export const uploadProjectImage = async (file: File, projectId: string): Promise<string> => {
     try {
-      // Upload to Cloudinary
+      // Upload to server
       const imageUrl = await uploadImage(file, `projects/${projectId}`)
       return imageUrl
     } catch (error) {
@@ -165,4 +165,3 @@ import {
       throw error
     }
   }
-  

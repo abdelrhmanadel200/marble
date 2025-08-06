@@ -30,7 +30,7 @@ export default function AboutPage() {
       {/* Hero Section */}
       <section className="relative h-[300px] bg-black">
         <Image
-          src="/placeholder.svg?height=300&width=1920&text=About+Us"
+          src="/UMI-Stone-Mableton-warehouse_hero-scaled.jpg"
           alt="About Us"
           fill
           className="object-cover opacity-70"
@@ -69,7 +69,7 @@ export default function AboutPage() {
           </div>
           <div className="relative h-96">
             <Image
-              src="/placeholder.svg?height=500&width=600&text=Our+Workshop"
+              src="/UMI-Stone-Mableton-warehouse_hero-scaled.jpg"
               alt="Our workshop"
               fill
               className="object-cover rounded-lg"

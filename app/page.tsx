@@ -34,7 +34,7 @@ export default function Home() {
       {/* Hero Section */}
       <section className="relative h-[600px] bg-black">
         <Image
-          src="/placeholder.svg?height=600&width=1920&text=Premium+Marble+and+Stone"
+          src="/UMI-Stone-Mableton-warehouse_hero-scaled.jpg"
           alt="Premium Marble and Stone"
           fill
           className="object-cover opacity-70"
@@ -152,7 +152,7 @@ export default function Home() {
             </div>
             <div className="relative h-96 rounded-lg overflow-hidden">
               <Image
-                src="/placeholder.svg?height=500&width=600&text=About+Top+Marble"
+                src="/UMI-Stone-Mableton-warehouse_hero-scaled.jpg"
                 alt="About Top Marble"
                 fill
                 className="object-cover"

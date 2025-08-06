@@ -164,12 +164,12 @@ export default function Header() {
             )}
           </div>
 
-          <Link href="/projects" className="hover:text-blue-600 font-medium">
+          {/* <Link href="/projects" className="hover:text-blue-600 font-medium">
             Projects
-          </Link>
-          <Link href="/factory" className="hover:text-blue-600 font-medium">
+          </Link> */}
+          {/* <Link href="/factory" className="hover:text-blue-600 font-medium">
             Factory
-          </Link>
+          </Link> */}
           <Link href="/about" className="hover:text-blue-600 font-medium">
             About
           </Link>

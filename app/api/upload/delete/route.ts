@@ -1,33 +1,30 @@
-import { type NextRequest, NextResponse } from "next/server"
-import { v2 as cloudinary } from "cloudinary"
+import { NextResponse } from "next/server";
+import path from "path";
+import fs from "fs";
 
-// Configure Cloudinary
-cloudinary.config({
-  cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-  secure: true,
-})
-
-export async function POST(request: NextRequest) {
+export async function POST(request: Request) {
   try {
-    const { publicId } = await request.json()
+    const { filePath } = await request.json();
 
-    if (!publicId) {
-      return NextResponse.json({ error: "No public_id provided" }, { status: 400 })
+    if (!filePath) {
+      return NextResponse.json({ error: "No file path provided" }, { status: 400 });
     }
 
-    // Delete from Cloudinary
-    const result = await new Promise<any>((resolve, reject) => {
-      cloudinary.uploader.destroy(publicId, {}, (error, result) => {
-        if (error) reject(error)
-        else resolve(result)
-      })
-    })
+    // Make sure the path is within our uploads directory for security
+    const normalizedPath = path.normalize(filePath).replace(/^\/+/, '');
+    const fullPath = path.join(process.cwd(), "public", normalizedPath);
+    
+    // Verify the file exists and is within our uploads directory
+    if (!fullPath.startsWith(path.join(process.cwd(), "public", "uploads")) || !fs.existsSync(fullPath)) {
+      return NextResponse.json({ error: "Invalid file path" }, { status: 400 });
+    }
 
-    return NextResponse.json({ result })
+    // Delete the file
+    fs.unlinkSync(fullPath);
+
+    return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("Error deleting from Cloudinary:", error)
-    return NextResponse.json({ error: "Failed to delete image" }, { status: 500 })
+    console.error("Error deleting file:", error);
+    return NextResponse.json({ error: "Failed to delete image" }, { status: 500 });
   }
 }

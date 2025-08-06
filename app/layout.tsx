@@ -29,7 +29,7 @@ export const metadata: Metadata = {
     locale: "en_US",
     type: "website",
   },
-    generator: 'v0.dev'
+    generator: 'top marble'
 }
 
 export default function RootLayout({

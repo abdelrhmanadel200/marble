@@ -8,7 +8,7 @@ export default function AboutUsPage() {
       {/* Hero Section */}
       <section className="relative h-[400px] bg-black">
         <Image
-          src="/placeholder.svg?height=400&width=1920"
+          src="/UMI-Stone-Mableton-warehouse_hero-scaled.jpg"
           alt="About Top Modern"
           fill
           className="object-cover opacity-70"
@@ -46,7 +46,7 @@ export default function AboutUsPage() {
           </div>
           <div className="relative h-96">
             <Image
-              src="/placeholder.svg?height=500&width=600"
+              src="/UMI-Stone-Mableton-warehouse_hero-scaled.jpg"
               alt="Our workshop"
               fill
               className="object-cover rounded-lg"

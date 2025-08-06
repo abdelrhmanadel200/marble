@@ -94,7 +94,7 @@ export default function ContactPage() {
       {/* Hero Section */}
       <section className="relative h-[300px] bg-black">
         <Image
-          src="/placeholder.svg?height=300&width=1920&text=Contact+Us"
+          src="/UMI-Stone-Mableton-warehouse_hero-scaled.jpg"
           alt="Contact Us"
           fill
           className="object-cover opacity-70"
